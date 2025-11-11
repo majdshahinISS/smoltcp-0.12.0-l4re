@@ -8,9 +8,12 @@ use std::{io, mem, ptr};
 #[path = "linux.rs"]
 mod imp;
 
+#[cfg(target_os = "l4re")] // @MS
+pub mod l4re; // @MS
+
 #[cfg(all(
     feature = "phy-raw_socket",
-    not(any(target_os = "linux", target_os = "android")),
+    not(any(target_os = "linux", target_os = "android", target_os = "l4re")), // @MS
     unix
 ))]
 pub mod bpf;
@@ -27,10 +30,12 @@ pub mod tuntap_interface;
 
 #[cfg(all(
     feature = "phy-raw_socket",
-    not(any(target_os = "linux", target_os = "android")),
+    not(any(target_os = "linux", target_os = "android", target_os = "l4re")), // @MS
     unix
 ))]
 pub use self::bpf::BpfDevice as RawSocketDesc;
+#[cfg(target_os = "l4re")] // @MS
+pub use self::l4re::l4re_net as L4reNetDevice; // @MS
 #[cfg(all(
     feature = "phy-raw_socket",
     any(target_os = "linux", target_os = "android")
