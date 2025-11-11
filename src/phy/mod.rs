@@ -102,7 +102,7 @@ mod fuzz_injector;
 #[cfg(feature = "alloc")]
 mod loopback;
 mod pcap_writer;
-#[cfg(all(feature = "phy-raw_socket", unix))]
+#[cfg(all(feature = "phy-raw_socket", unix, not(target_os = "l4re")))] // @MS
 mod raw_socket;
 mod tracer;
 #[cfg(all(
@@ -123,9 +123,11 @@ pub use self::fuzz_injector::{FuzzInjector, Fuzzer};
 #[cfg(feature = "alloc")]
 pub use self::loopback::Loopback;
 pub use self::pcap_writer::{PcapLinkType, PcapMode, PcapSink, PcapWriter};
-#[cfg(all(feature = "phy-raw_socket", unix))]
+#[cfg(all(feature = "phy-raw_socket", unix, not(target_os = "l4re")))] // @MS
 pub use self::raw_socket::RawSocket;
-pub use self::tracer::{Tracer, TracerDirection, TracerPacket};
+pub use self::tracer::Tracer;
+#[cfg(target_os = "l4re")] // @MS
+pub use self::sys::L4reNetDevice; // @MS
 #[cfg(all(
     feature = "phy-tuntap_interface",
     any(target_os = "linux", target_os = "android")
